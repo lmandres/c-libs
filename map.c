@@ -85,14 +85,16 @@ void *map_get(Map *map, char *key)
 
     const int i = map_index(map, key, map->keys);
 
-    return map->values[i];
-
-    return NULL;
+    if (map->values[i] != NULL) {
+        return map->values[i];
+    } else {
+        return NULL;
+    }
 }
 
 const int map_size(Map *map)
 {
-    assert(map != NULL);
+   assert(map != NULL);
 
     return map->size;
 }
@@ -112,7 +114,7 @@ static unsigned long hash(unsigned char const *str)
 
     while (c = *str++) {
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-    }
+   }
 
     return hash;
 }
@@ -125,6 +127,9 @@ static const int map_index(Map *map, char *key, char **keys)
 
     while (keys[i] && strcmp_(keys[i], key) != 0) {
         i = (i + 1) % map->cap;
+        if (map->cap == map->size) {
+            break;
+        } 
     }
 
     return i;
